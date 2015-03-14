@@ -1,0 +1,21 @@
+{
+    "name": "jackwakefield/Phec",
+    "description": "A JavaScript Virtual Machine for PHP",
+    "license": "Apache-2.0",
+    "keywords": ["phec"],
+    "authors": [
+        {
+            "name": "Jack Wakefield",
+            "email": "jackwakefield91@gmail.com"
+        }
+    ],
+    "require": {},
+    "require-dev": {
+        "phpunit/phpunit": "4.0.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "JackWakefield\\Phec\\": "src"
+        }
+    }
+}

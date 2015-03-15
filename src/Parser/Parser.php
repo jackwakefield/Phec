@@ -48,6 +48,11 @@ class Parser implements LoggerAwareInterface {
                         $this->logger->debug('IDENTIFIER_NAME: '.$this->tokenizer->getLiteral());
                     }
                     break;
+                case Token::NUMERIC_LITERAL:
+                    if (!is_null($this->logger)) {
+                        $this->logger->debug('NUMERIC_LITERAL: '.$this->tokenizer->getNumericLiteral());
+                    }
+                    break;
             }
         } while ($token != Token::EOF);
     }

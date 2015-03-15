@@ -8,4 +8,5 @@ abstract class Token {
     const PUNCTUATOR = 2;
     const DIV_PUNCTUATOR = 3;
     const IDENTIFIER_NAME = 4;
+    const NUMERIC_LITERAL = 5;
 }

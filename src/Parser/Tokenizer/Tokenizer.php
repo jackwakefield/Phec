@@ -29,6 +29,8 @@ class Tokenizer implements LoggerAwareInterface {
 
     private static $divisionPunctuators = array('/', '/=');
 
+    private static $numericLiteralRegex = '/^[0-9]+$/';
+
     private $source;
     private $position;
     private $character;
@@ -52,10 +54,16 @@ class Tokenizer implements LoggerAwareInterface {
                 return Token::EOF;
             }
 
-            if ($this->isWhitespace()) {
-                
-                
+            if ($this->isSemiColon()) {
+                $this->character = '';
+            }
+
+            if ($this->isWhitespace() || strlen($this->character) == 0) {
                 if (strlen($this->literal) > 0) {
+                    if ($this->isNumeric()) {
+                        return Token::NUMERIC_LITERAL;
+                    }
+
                     return Token::IDENTIFIER_NAME;
                 }
 
@@ -84,6 +92,10 @@ class Tokenizer implements LoggerAwareInterface {
         return $this->literal;
     }
 
+    public function getNumericLiteral() {
+        return intval($this->literal);
+    }
+
     private function nextCharacter() {
         if ($this->isEndOfFile()) {
             return false;
@@ -95,6 +107,10 @@ class Tokenizer implements LoggerAwareInterface {
 
     private function isWhitespace() {
         return in_array($this->character, Tokenizer::$whitespaceCharacters);
+    }
+
+    private function isSemiColon() {
+        return $this->character == ';';
     }
 
     private function isEndOfFile() {
@@ -111,5 +127,9 @@ class Tokenizer implements LoggerAwareInterface {
 
     private function isDivisionPunctuator() {
         return in_array($this->literal, Tokenizer::$divisionPunctuators);
+    }
+
+    private function isNumeric() {
+        return preg_match(Tokenizer::$numericLiteralRegex, $this->literal);
     }
 }

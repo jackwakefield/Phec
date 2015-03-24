@@ -1,6 +1,6 @@
 {
     "name": "jackwakefield/Phec",
-    "description": "A JavaScript Virtual Machine for PHP",
+    "description": "A JavaScript engine for PHP",
     "license": "Apache-2.0",
     "keywords": ["phec"],
     "authors": [

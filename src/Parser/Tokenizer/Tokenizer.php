@@ -48,6 +48,7 @@ class Tokenizer implements LoggerAwareInterface {
 
     public function getNextToken() {
         $this->literal = '';
+        $break = false;
 
         while (true) {
             if (!$this->nextCharacter()) {
@@ -55,10 +56,15 @@ class Tokenizer implements LoggerAwareInterface {
             }
 
             if ($this->isSemiColon()) {
-                $this->character = '';
+                $break = true;
             }
 
-            if ($this->isWhitespace() || strlen($this->character) == 0) {
+            if ($this->isCharacterPunctuator() && !$this->isLiteralEmpty()) {
+                $break = true;
+                $this->position--;
+            }
+
+            if ($this->isWhitespace() || $break) {
                 if (strlen($this->literal) > 0) {
                     if ($this->isNumeric()) {
                         return Token::NUMERIC_LITERAL;
@@ -72,7 +78,7 @@ class Tokenizer implements LoggerAwareInterface {
 
             $this->literal .= $this->character;
 
-            if ($this->isKeyword()) {
+            if ($this->isKeyword() && $this->isNextCharacterWhitespace()) {
                 return Token::KEYWORD;
             }
 
@@ -92,6 +98,10 @@ class Tokenizer implements LoggerAwareInterface {
         return $this->literal;
     }
 
+    private function isLiteralEmpty() {
+        return strlen($this->literal) == 0;
+    }
+
     public function getNumericLiteral() {
         return intval($this->literal);
     }
@@ -105,8 +115,20 @@ class Tokenizer implements LoggerAwareInterface {
         return true;
     }
 
+    private function peek() {
+        if ($this->isEndOfFile()) {
+            return null;
+        }
+
+        return $this->source[$this->position + 1];
+    }
+
     private function isWhitespace() {
         return in_array($this->character, Tokenizer::$whitespaceCharacters);
+    }
+
+    private function isNextCharacterWhitespace() {
+        return in_array($this->peek(), Tokenizer::$whitespaceCharacters);
     }
 
     private function isSemiColon() {
@@ -123,6 +145,10 @@ class Tokenizer implements LoggerAwareInterface {
 
     private function isPunctuator() {
         return in_array($this->literal, Tokenizer::$punctuators);
+    }
+
+    private function isCharacterPunctuator() {
+        return in_array($this->character, Tokenizer::$punctuators);
     }
 
     private function isDivisionPunctuator() {
